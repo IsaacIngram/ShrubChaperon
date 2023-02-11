@@ -36,6 +36,9 @@ LiquidCrystal lcd(
   LCD_DB7_PIN
 );
 
+/**
+ * Initialize serial, the LCD, and the moisture sensor.
+ */
 void setup() {
 
   // Initialize serial
@@ -54,7 +57,9 @@ void setup() {
   }
 
 }
+
 void loop() {
-  // put your main code here, to run repeatedly:
+
+
 
 }
