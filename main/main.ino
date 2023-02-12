@@ -42,7 +42,6 @@ LiquidCrystal lcd(
  * Initialize serial, the LCD, and the moisture sensor.
  */
 void setup() {
-
   // Initialize serial
   Serial.begin(115200);
   Serial.println("Program starting...");
@@ -57,14 +56,12 @@ void setup() {
     lcd.print("Error: No sensor");
     delay(500);
   }
-
 }
 
 /**
  * Main loop that gets data from the moisture sensor and updates the display
  */
 void loop() {
-
   // Get moisture from sensor
   int moisture = sensor.touchRead(SENSOR_TOUCH_PIN);
 
@@ -74,6 +71,5 @@ void loop() {
   lcd.print(text);
 
   delay(1000);
-
 }
 
