@@ -8,7 +8,9 @@
 #include <LiquidCrystal.h>
 
 /// The I2C address of the moisture sensor
-#define MOISTURE_SENSOR_ADDRESS 0x36
+#define SENSOR_ADDRESS 0x36
+/// Sensor touch pin
+#define SENSOR_TOUCH_PIN 0
 /// Arduino digital pin the display RS pin is connected to
 #define LCD_RS_PIN 7
 /// Arudino digital pin the display EN pin is connected to
@@ -26,7 +28,7 @@
 /// Number of display columns
 #define LCD_COLUMNS 16
 
-Adafruit_seesaw moisture_sensor;
+Adafruit_seesaw sensor;
 LiquidCrystal lcd(
   LCD_RS_PIN, 
   LCD_EN_PIN, 
@@ -50,7 +52,7 @@ void setup() {
   lcd.print("Booting...");
 
   // Initialize moisture sensor
-  while(!moisture_sensor.begin(MOISTURE_SENSOR_ADDRESS)) {
+  while(!sensor.begin(SENSOR_ADDRESS)) {
     Serial.println("ERROR: Sensor not found");
     lcd.print("Error: No sensor");
     delay(500);
@@ -58,8 +60,20 @@ void setup() {
 
 }
 
+/**
+ * Main loop that gets data from the moisture sensor and updates the display
+ */
 void loop() {
 
+  // Get moisture from sensor
+  int moisture = sensor.touchRead(SENSOR_TOUCH_PIN);
 
+  // Print moisture to serial and LCD
+  String text = "Moisture: " + moisture;
+  Serial.println(text);
+  lcd.print(text);
+
+  delay(1000);
 
 }
+
