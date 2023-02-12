@@ -1,9 +1,3 @@
-/**
- * File: main.ino
- * Author: Isaac Ingram
- * This is the main loop for controlling the moisture sensor and display.
- */
-
 #include "Adafruit_seesaw.h"
 #include <LiquidCrystal.h>
 
