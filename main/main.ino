@@ -1,5 +1,7 @@
 #include "Adafruit_seesaw.h"
 #include <LiquidCrystal.h>
+#include <SPI.h>
+#include <WiFi.h>
 
 /// The I2C address of the moisture sensor
 #define SENSOR_ADDRESS 0x36
@@ -21,6 +23,10 @@
 #define LCD_ROWS 2
 /// Number of display columns
 #define LCD_COLUMNS 16
+/// The SSID of the network to connect to
+char wifi_ssid[] = "NETWORK_NAME";
+char wifi_password[] = "NETWORK_PASSWORD";
+/// The password of the network to connect to
 
 Adafruit_seesaw sensor;
 LiquidCrystal lcd(
@@ -44,25 +50,39 @@ void setup() {
   lcd.begin(LCD_COLUMNS, LCD_ROWS);
   lcd.print("Booting...");
 
-  // Initialize moisture sensor
+  // Initialize moisture sensor. This loops until it is connected.
   while(!sensor.begin(SENSOR_ADDRESS)) {
     Serial.println("ERROR: Sensor not found");
     lcd.print("Error: No sensor");
     delay(500);
   }
+
+  // Begin the wifi connection
+  WiFi.begin(wifi_ssid, wifi_password);
 }
 
-/**
- * Main loop that gets data from the moisture sensor and updates the display
- */
 void loop() {
-  // Get moisture from sensor
-  int moisture = sensor.touchRead(SENSOR_TOUCH_PIN);
+  // Define string later used to print data to the LCD
+  String lineOne = "";
+  String lineTwo = "";
 
-  // Print moisture to serial and LCD
-  String text = "Moisture: " + moisture;
-  Serial.println(text);
-  lcd.print(text);
+  // Get moisture from sensor and format for printing
+  int moisture = sensor.touchRead(SENSOR_TOUCH_PIN);
+  lineOne = "Val: " + moisture;
+
+  // Check Wifi status
+  if(WiFi.status() == WL_CONNECTED) {
+    //TODO send data to DataDog
+    // Format printing nothing
+    lineTwo = "";
+  } else {
+    // Format printing no wifi
+    lineTwo = "No wifi";
+  }
+
+  // Print to LCD and serial
+  lcd.print(lineOne + "\n" + lineTwo);
+  Serial.print(lineOne + "\n" + lineTwo + "\n");
 
   delay(1000);
 }
