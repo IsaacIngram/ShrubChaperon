@@ -23,10 +23,13 @@
 #define LCD_ROWS 2
 /// Number of display columns
 #define LCD_COLUMNS 16
+/// 
+#define CONNECTION_DELAY_MILLIS 10000
 /// The SSID of the network to connect to
 char wifi_ssid[] = "NETWORK_NAME";
-char wifi_password[] = "NETWORK_PASSWORD";
 /// The password of the network to connect to
+char wifi_password[] = "NETWORK_PASSWORD";
+
 
 Adafruit_seesaw sensor;
 LiquidCrystal lcd(
@@ -61,6 +64,8 @@ void setup() {
   WiFi.begin(wifi_ssid, wifi_password);
 }
 
+long last_connect_attempt_millis = 0;
+
 void loop() {
   // Define string later used to print data to the LCD
   String lineOne = "";
@@ -78,6 +83,15 @@ void loop() {
   } else {
     // Format printing no wifi
     lineTwo = "No wifi";
+
+    // Check time since the last attempted wifi connection. This uses the
+    // absolute value as the millis() counter resets after 50 days of runtime
+    if(abs(millis() - last_connect_attempt_millis) > CONNECTION_DELAY_MILLIS)
+    {
+      // Begin Wifi connection again
+      WiFi.begin(wifi_ssid, wifi_password);
+      last_connect_attempt_millis = millis();
+    }
   }
 
   // Print to LCD and serial
