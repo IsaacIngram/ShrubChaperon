@@ -12,13 +12,13 @@
 /// Arudino digital pin the display EN pin is connected to
 #define LCD_EN_PIN 8
 /// Arduino digitial pin the display db4 pin is connected to
-#define LCD_DB4_PIN 9
+#define LCD_DB4_PIN 2
 /// Arduino digitial pin the display db5 pin is connected to
-#define LCD_DB5_PIN 10
+#define LCD_DB5_PIN 4
 /// Arduino digitial pin the display db6 pin is connected to
-#define LCD_DB6_PIN 11
+#define LCD_DB6_PIN 12
 /// Arduino digitial pin the display db7 pin is connected to
-#define LCD_DB7_PIN 12
+#define LCD_DB7_PIN 13
 /// Number of display rows
 #define LCD_ROWS 2
 /// Number of display columns
@@ -46,7 +46,7 @@ LiquidCrystal lcd(
  */
 void setup() {
   // Initialize serial
-  Serial.begin(115200);
+  Serial.begin(9600);
   Serial.println("Program starting...");
 
   // Initialize LCD
@@ -56,6 +56,7 @@ void setup() {
   // Initialize moisture sensor. This loops until it is connected.
   while(!sensor.begin(SENSOR_ADDRESS)) {
     Serial.println("ERROR: Sensor not found");
+    lcd.setCursor(0, 0);
     lcd.print("Error: No sensor");
     delay(500);
   }
@@ -95,7 +96,10 @@ void loop() {
   }
 
   // Print to LCD and serial
-  lcd.print(lineOne + "\n" + lineTwo);
+  lcd.setCursor(0, 0);
+  lcd.print(lineOne);
+  lcd.setCursor(0, 1);
+  lcd.print(lineTwo);
   Serial.print(lineOne + "\n" + lineTwo + "\n");
 
   delay(1000);
