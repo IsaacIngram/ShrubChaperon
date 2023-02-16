@@ -76,7 +76,7 @@ void loop() {\
 
   // Get WiFi status
   bool wifi_connected = WiFi.status() == WL_CONNECTED;
-\
+
   if(wifi_connected) {
     //TODO send data to DataDog
   } else {
