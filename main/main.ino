@@ -51,7 +51,10 @@ void setup() {
 
   // Initialize LCD
   lcd.begin(LCD_COLUMNS, LCD_ROWS);
-  lcd.print("Booting...");
+  lcd.clear();
+  lcd.print("SproutChaperone");
+  lcd.setCursor(0, 1);
+  lcd.print("Starting...");
 
   // Initialize moisture sensor. This loops until it is connected.
   while(!sensor.begin(SENSOR_ADDRESS)) {
@@ -67,24 +70,16 @@ void setup() {
 
 long last_connect_attempt_millis = 0;
 
-void loop() {
-  // Define string later used to print data to the LCD
-  String lineOne = "";
-  String lineTwo = "";
-
-  // Get moisture from sensor and format for printing
+void loop() {\
+  // Get moisture from sensor
   int moisture = sensor.touchRead(SENSOR_TOUCH_PIN);
-  lineOne = "Val: " + moisture;
 
-  // Check Wifi status
-  if(WiFi.status() == WL_CONNECTED) {
+  // Get WiFi status
+  bool wifi_connected = WiFi.status() == WL_CONNECTED;
+\
+  if(wifi_connected) {
     //TODO send data to DataDog
-    // Format printing nothing
-    lineTwo = "";
   } else {
-    // Format printing no wifi
-    lineTwo = "No wifi";
-
     // Check time since the last attempted wifi connection. This uses the
     // absolute value as the millis() counter resets after 50 days of runtime
     if(abs(millis() - last_connect_attempt_millis) > CONNECTION_DELAY_MILLIS)
@@ -95,12 +90,21 @@ void loop() {
     }
   }
 
-  // Print to LCD and serial
-  lcd.setCursor(0, 0);
-  lcd.print(lineOne);
+  // Add moisture level to a string to print
+  String moisture_print = "Val: ";
+  moisture_print = moisture_print + moisture;
+
+  // Print moisture level on top line
+  lcd.clear();
+  lcd.print(moisture_print);
+
+  // Switch to second line
   lcd.setCursor(0, 1);
-  lcd.print(lineTwo);
-  Serial.print(lineOne + "\n" + lineTwo + "\n");
+
+  // Print no wifi if wifi is not connected
+  if(!wifi_connected) {
+    lcd.print("No wifi");
+  }
 
   delay(1000);
 }
