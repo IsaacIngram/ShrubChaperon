@@ -68,7 +68,7 @@ void setup() {
 
 long last_connect_attempt_millis = 0;
 
-void loop() {\
+void loop() {
   // Get moisture from sensor
   int moisture = sensor.touchRead(SENSOR_TOUCH_PIN);
 
