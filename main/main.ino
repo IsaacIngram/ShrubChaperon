@@ -23,12 +23,10 @@
 #define LCD_ROWS 2
 /// Number of display columns
 #define LCD_COLUMNS 16
-/// 
+/// The amount of time to wait before trying to reconnect
 #define CONNECTION_DELAY_MILLIS 10000
 /// The SSID of the network to connect to
-char wifi_ssid[] = "NETWORK_NAME";
-/// The password of the network to connect to
-char wifi_password[] = "NETWORK_PASSWORD";
+char wifi_ssid[] = "RIT-WiFi";
 
 
 Adafruit_seesaw sensor;
@@ -65,7 +63,7 @@ void setup() {
   }
 
   // Begin the wifi connection
-  WiFi.begin(wifi_ssid, wifi_password);
+  WiFi.begin(wifi_ssid);
 }
 
 long last_connect_attempt_millis = 0;
@@ -85,7 +83,7 @@ void loop() {\
     if(abs(millis() - last_connect_attempt_millis) > CONNECTION_DELAY_MILLIS)
     {
       // Begin Wifi connection again
-      WiFi.begin(wifi_ssid, wifi_password);
+      WiFi.begin(wifi_ssid);
       last_connect_attempt_millis = millis();
     }
   }
