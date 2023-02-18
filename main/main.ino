@@ -56,7 +56,7 @@ void setup() {
 
   // Initialize moisture sensor. This loops until it is connected.
   while(!sensor.begin(SENSOR_ADDRESS)) {
-    Serial.println("ERROR: Sensor not found");
+    lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Error: No sensor");
     delay(500);
@@ -99,9 +99,11 @@ void loop() {
   // Switch to second line
   lcd.setCursor(0, 1);
 
-  // Print no wifi if wifi is not connected
+  // Print wifi status
   if(!wifi_connected) {
     lcd.print("No wifi");
+  } else {
+    lcd.print("Wifi connected");
   }
 
   delay(1000);
