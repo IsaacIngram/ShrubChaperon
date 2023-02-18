@@ -25,6 +25,8 @@
 #define LCD_COLUMNS 16
 /// The amount of time to wait before trying to reconnect
 #define CONNECTION_DELAY_MILLIS 10000
+/// The millis to delay between each loop iteration
+#define LOOP_DELAY_MILLIS 2000
 /// The SSID of the network to connect to
 char wifi_ssid[] = "RIT-WiFi";
 
@@ -106,6 +108,6 @@ void loop() {
     lcd.print("Wifi connected");
   }
 
-  delay(1000);
+  delay(LOOP_DELAY_MILLIS);
 }
 
