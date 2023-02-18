@@ -3,6 +3,9 @@
 #include <SPI.h>
 #include <WiFi.h>
 
+/*
+ADDRESSES AND PINS
+*/
 /// The I2C address of the moisture sensor
 #define SENSOR_ADDRESS 0x36
 /// Sensor touch pin
@@ -19,19 +22,33 @@
 #define LCD_DB6_PIN 12
 /// Arduino digitial pin the display db7 pin is connected to
 #define LCD_DB7_PIN 13
+
+/*
+DISPLAY INFO
+*/
 /// Number of display rows
 #define LCD_ROWS 2
 /// Number of display columns
 #define LCD_COLUMNS 16
+
+/*
+TIME DELAYS
+*/
 /// The amount of time to wait before trying to reconnect
 #define CONNECTION_DELAY_MILLIS 10000
 /// The millis to delay between each loop iteration
 #define LOOP_DELAY_MILLIS 2000
+
+/*
+NETWORK INFO
+*/
 /// The SSID of the network to connect to
 char wifi_ssid[] = "RIT-WiFi";
 
-
+// Moisture sensor
 Adafruit_seesaw sensor;
+
+// Display
 LiquidCrystal lcd(
   LCD_RS_PIN, 
   LCD_EN_PIN, 
@@ -70,6 +87,10 @@ void setup() {
 
 long last_connect_attempt_millis = 0;
 
+/**
+ * Continuously get the moisture data from the moisture sensor, print it to
+ * the display, and update DataDog.
+ */
 void loop() {
   // Get moisture from sensor
   int moisture = sensor.touchRead(SENSOR_TOUCH_PIN);
