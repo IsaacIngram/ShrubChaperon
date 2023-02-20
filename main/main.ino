@@ -2,6 +2,8 @@
 #include <LiquidCrystal.h>
 #include <SPI.h>
 #include <WiFi.h>
+#include <WiFiUdp.h>
+#include <Statsd.h>
 
 /*
 ADDRESSES AND PINS
@@ -43,10 +45,25 @@ TIME DELAYS
 NETWORK INFO
 */
 /// The SSID of the network to connect to
-char wifi_ssid[] = "RIT-WiFi";
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
+
+/*
+STATSD INFO
+*/
+/// The IP of the DataDog Agent
+#define DD_AGENT_IP ""
+/// The port of the DataDog Agent
+#define DD_AGENT_PORT ""
+/// The name of the metric
+#define METRIC_NAME "plant.moisture"
 
 // Moisture sensor
 Adafruit_seesaw sensor;
+
+// Statsd Connection for DataDog Agent
+WiFiUDP udp;
+Statsd statsd(udp, DD_AGENT_IP, DD_AGENT_PORT);
 
 // Display
 LiquidCrystal lcd(
@@ -82,10 +99,11 @@ void setup() {
   }
 
   // Begin the wifi connection
-  WiFi.begin(wifi_ssid);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 }
 
 long last_connect_attempt_millis = 0;
+bool was_previously_connected = false;
 
 /**
  * Continuously get the moisture data from the moisture sensor, print it to
@@ -99,16 +117,25 @@ void loop() {
   bool wifi_connected = WiFi.status() == WL_CONNECTED;
 
   if(wifi_connected) {
-    //TODO send data to DataDog
+    // Check if the Wifi was connected last time this loop ran
+    if(!was_previously_connected) {
+      // If it wasn't previously connected, we need to restart the connection
+      // to the DataDog agent
+      statsd.begin();
+    }
+    // Log data into DataDog
+    statsd.gauge(METRIC_NAME, moisture);
+    was_previously_connected = true;
   } else {
     // Check time since the last attempted wifi connection. This uses the
     // absolute value as the millis() counter resets after 50 days of runtime
     if(abs(millis() - last_connect_attempt_millis) > CONNECTION_DELAY_MILLIS)
     {
       // Begin Wifi connection again
-      WiFi.begin(wifi_ssid);
+      WiFi.begin(WIFI_SSID);
       last_connect_attempt_millis = millis();
     }
+    was_previously_connected = false;
   }
 
   // Add moisture level to a string to print
