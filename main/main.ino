@@ -1,9 +1,7 @@
 #include "Adafruit_seesaw.h"
 #include <LiquidCrystal.h>
-#include <SPI.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
-#include <Statsd.h>
 
 /*
 ADDRESSES AND PINS
@@ -39,7 +37,7 @@ TIME DELAYS
 /// The amount of time to wait before trying to reconnect
 #define CONNECTION_DELAY_MILLIS 10000
 /// The millis to delay between each loop iteration
-#define LOOP_DELAY_MILLIS 2000
+#define LOOP_DELAY_MILLIS 1000
 
 /*
 NETWORK INFO
@@ -60,10 +58,6 @@ STATSD INFO
 
 // Moisture sensor
 Adafruit_seesaw sensor;
-
-// Statsd Connection for DataDog Agent
-WiFiUDP udp;
-Statsd statsd(udp, DD_AGENT_IP, DD_AGENT_PORT);
 
 // Display
 LiquidCrystal lcd(
@@ -95,6 +89,7 @@ void setup() {
     lcd.clear();
     lcd.setCursor(0, 0);
     lcd.print("Error: No sensor");
+    Serial.println("Error: No sensor");
     delay(500);
   }
 
@@ -104,6 +99,7 @@ void setup() {
 
 long last_connect_attempt_millis = 0;
 bool was_previously_connected = false;
+WiFiUDP udp;
 
 /**
  * Continuously get the moisture data from the moisture sensor, print it to
@@ -117,15 +113,11 @@ void loop() {
   bool wifi_connected = WiFi.status() == WL_CONNECTED;
 
   if(wifi_connected) {
-    // Check if the Wifi was connected last time this loop ran
-    if(!was_previously_connected) {
-      // If it wasn't previously connected, we need to restart the connection
-      // to the DataDog agent
-      statsd.begin();
-    }
-    // Log data into DataDog
-    statsd.gauge(METRIC_NAME, moisture);
-    was_previously_connected = true;
+    // Send a packet to the DataDog Agent
+    udp.beginPacket(DD_AGENT_IP, DD_AGENT_PORT);
+    char reply_buffer[] = "plant.moisture:300|g";
+    udp.write(reply_buffer);
+    udp.endPacket();
   } else {
     // Check time since the last attempted wifi connection. This uses the
     // absolute value as the millis() counter resets after 50 days of runtime
@@ -135,7 +127,6 @@ void loop() {
       WiFi.begin(WIFI_SSID);
       last_connect_attempt_millis = millis();
     }
-    was_previously_connected = false;
   }
 
   // Add moisture level to a string to print
@@ -155,6 +146,8 @@ void loop() {
   } else {
     lcd.print("Wifi connected");
   }
+
+
 
   delay(LOOP_DELAY_MILLIS);
 }
