@@ -11,17 +11,17 @@ ADDRESSES AND PINS
 /// Sensor touch pin
 #define SENSOR_TOUCH_PIN 0
 /// Arduino digital pin the display RS pin is connected to
-#define LCD_RS_PIN 7
+#define LCD_RS_PIN 2
 /// Arudino digital pin the display EN pin is connected to
-#define LCD_EN_PIN 8
+#define LCD_EN_PIN 3
 /// Arduino digitial pin the display db4 pin is connected to
-#define LCD_DB4_PIN 2
+#define LCD_DB4_PIN 4
 /// Arduino digitial pin the display db5 pin is connected to
-#define LCD_DB5_PIN 4
+#define LCD_DB5_PIN 5
 /// Arduino digitial pin the display db6 pin is connected to
-#define LCD_DB6_PIN 12
+#define LCD_DB6_PIN 6
 /// Arduino digitial pin the display db7 pin is connected to
-#define LCD_DB7_PIN 13
+#define LCD_DB7_PIN 7
 
 /*
 DISPLAY INFO
