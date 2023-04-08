@@ -1,2 +1,2 @@
 *.DS_Store
-/main/secrets.h
+main/secrets.h
