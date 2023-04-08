@@ -2,6 +2,7 @@
 #include <LiquidCrystal.h>
 #include <WiFi.h>
 #include <WiFiUdp.h>
+#include "secrets.h"
 
 /*
 ADDRESSES AND PINS
@@ -38,23 +39,6 @@ TIME DELAYS
 #define CONNECTION_DELAY_MILLIS 10000
 /// The millis to delay between each loop iteration
 #define LOOP_DELAY_MILLIS 1000
-
-/*
-NETWORK INFO
-*/
-/// The SSID of the network to connect to
-#define WIFI_SSID ""
-#define WIFI_PASSWORD ""
-
-/*
-STATSD INFO
-*/
-/// The IP of the DataDog Agent
-#define DD_AGENT_IP ""
-/// The port of the DataDog Agent
-#define DD_AGENT_PORT ""
-/// The name of the metric
-#define METRIC_NAME "plant.moisture"
 
 // Moisture sensor
 Adafruit_seesaw sensor;
