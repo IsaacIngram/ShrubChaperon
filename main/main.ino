@@ -53,6 +53,8 @@ LiquidCrystal lcd(
   LCD_DB7_PIN
 );
 
+WiFiUDP udp;
+
 /**
  * Initialize serial, the LCD, and the moisture sensor.
  */
@@ -79,11 +81,11 @@ void setup() {
 
   // Begin the wifi connection
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  udp.begin(DD_AGENT_PORT);
 }
 
 long last_connect_attempt_millis = 0;
 bool was_previously_connected = false;
-WiFiUDP udp;
 
 /**
  * Continuously get the moisture data from the moisture sensor, print it to
@@ -98,8 +100,9 @@ void loop() {
 
   if(wifi_connected) {
     // Send a packet to the DataDog Agent
-    udp.beginPacket(DD_AGENT_IP, DD_AGENT_PORT);
-    char reply_buffer[] = "plant.moisture:300|g";
+    udp.beginPacket(DD_AGENT_HOSTNAME, DD_AGENT_PORT);
+    char reply_buffer[100];
+    sprintf(reply_buffer, "%s:%d|g", METRIC_NAME, moisture);
     udp.write(reply_buffer);
     udp.endPacket();
   } else {
@@ -109,6 +112,7 @@ void loop() {
     {
       // Begin Wifi connection again
       WiFi.begin(WIFI_SSID);
+      udp.begin(DD_AGENT_PORT);
       last_connect_attempt_millis = millis();
     }
   }
