@@ -100,7 +100,7 @@ void loop() {
 
   if(wifi_connected) {
     // Send a packet to the DataDog Agent
-    udp.beginPacket(DD_AGENT_HOSTNAME, DD_AGENT_PORT);
+    udp.beginPacket(DD_AGENT_IP, DD_AGENT_PORT);
     char reply_buffer[100];
     sprintf(reply_buffer, "%s:%d|g", METRIC_NAME, moisture);
     udp.write(reply_buffer);
@@ -117,13 +117,21 @@ void loop() {
     }
   }
 
-  // Add moisture level to a string to print
-  String moisture_print = "Val: ";
-  moisture_print = moisture_print + moisture;
+  // Scale the moisture to be printed
+  String p_moisture;
+  if(moisture < 500) {
+    p_moisture = "LOW";
+  } else if(moisture > 700) {
+    p_moisture = "HIGH";
+  } else {
+    p_moisture = String(moisture % 500);
+  }
+
+  String print = "Moisture: " + p_moisture;
 
   // Print moisture level on top line
   lcd.clear();
-  lcd.print(moisture_print);
+  lcd.print(print);
 
   // Switch to second line
   lcd.setCursor(0, 1);
